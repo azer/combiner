@@ -1,0 +1,9 @@
+{
+  "name":"combiner",
+  "version":"1.0.0",
+  "description":"",
+  "author":"Azer Koculu <azer@kodfabrik.com>",
+  "keywords":["combine","combiner","fs"],
+  "directories":{ "lib": "./lib" },
+  "main":"./lib/combiner"
+}

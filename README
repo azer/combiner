@@ -1,0 +1,67 @@
+Combiner is both a command-line utility and a library for building source code.
+The basic idea behind its is to take advantage of a functional middleware that
+composes map/reduce/filter callbacks.
+
+Quick Start
+===========
+Most basic usage might be running it without parameters. Which produces the
+merge of all files on the executed directory. Specific filenames and
+directories can be picked also. Since both of these use cases aren't the goal
+of Combiner and won't be so common, it makes more sense to skip the
+demonstration of middleware;
+
+    $ combiner -map "function(el,callback){ callback(null, el.toUpperCase()) }"
+
+The simple command above uppercases all combined contents, as you've supposed.
+Combiner lets reduce and filter functions, as well.
+
+How It Works
+============
+
+The way it works is quite simple; takes filenames or searches executed
+directory to gather file names, applies asynchronous filter callbacks for each
+filename before it reads the contents of specified/found filenames.
+
+After reading contents of the filename list, combiner applies all specified map
+callbacks to the produced filelist. Built-in "readFile" function is one of
+those map functions and it can be shifted using splice method of the callback
+list;
+
+    > combiner.middleware.map.splice(0,1);
+    [Function: readFile]
+
+The final lap of middleware loop is to apply reduce callback - which doesn't
+support composition, in contrast to filter and map mechanisms.
+
+    > combiner.middleware.reduce
+    undefined
+
+As you see above, middleware's reduce option has no default value. However,
+Combiner replaces it with a function joining passed two arguments with two
+newline chars, if the reduce, at runtime, when it's left as undefined. 
+
+  > combiner.reduce(['a','b'], console.log.bind(console));
+  >
+  "a\n\nb"
+  > combiner.middleware.reduce = function(x,y){ return x+','+y; }
+  > combiner.reduce(['x','y'], console.log.bind(console));
+  >
+  "x,y"
+
+Install
+=======
+    > git clone https://github.com/azer/combiner.git
+    > cd roka
+    > make install
+
+Dependencies
+============
+* nodejs
+* functools
+
+Development
+===========
+status: under development
+todo:
+  - executable script (bin/combiner.js)
+  - usage example
