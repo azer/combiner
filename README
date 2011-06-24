@@ -65,3 +65,5 @@ status: under development
 todo:
   - executable script (bin/combiner.js)
   - usage example
+  - extend documentation (using ronn)
+  - build a website (combiner.kodfabrik.com)
