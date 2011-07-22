@@ -1,9 +1,13 @@
 {
   "name":"combiner",
   "version":"1.0.0",
-  "description":"",
+  "description":"Flexible file-joining library with functional middleware support.",
   "author":"Azer Koculu <azer@kodfabrik.com>",
-  "keywords":["combine","combiner","fs"],
+  "keywords":["combine","combiner","fs","join","merge","files"],
   "directories":{ "lib": "./lib" },
-  "main":"./lib/combiner"
+  "main":"./lib/combiner",
+  "dependencies":{
+    "functools":"1.1.0",
+    "opts":"1.2.1"
+  }
 }
