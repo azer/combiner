@@ -1,7 +1,15 @@
 #!/usr/bin/env node
-var combiner = require('../lib/combiner'),
-    opts = require('opts'),
+
+var opts = require('opts'),
     puts = require('sys').puts;
+
+var combiner;
+
+try {
+  combiner = require('../lib/combiner');
+} catch(exc) {
+  combiner = require('combiner');
+}
 
 var REV = '1.0';
 
