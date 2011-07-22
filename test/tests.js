@@ -3,7 +3,7 @@ var combiner = require("../lib/combiner"),
 
 function test_chain(callback){
   assert.equal(typeof combiner.chain, 'function');
-  combiner.chain('./',function(error, result){
+  combiner.chain(['./'],function(error, result){
     if(error) throw error;
     assert.equal(typeof result, 'string'); 
     callback();
@@ -11,12 +11,25 @@ function test_chain(callback){
 }
 
 function test_findFiles(callback){
-  combiner.findFiles('./', function(error, files){
+  combiner.findFiles(['./'], function(error, files){
     if(error){
       throw error;
     }
 
     assert.equal(files.length, 2);
+    callback();
+  });
+}
+
+function test_findFiles_fileList(callback){
+  combiner.findFiles(['../lib/combiner.js','tests.js'], function(error, files){
+    if(error){
+      throw error;
+    }
+
+    assert.equal(files.length, 2);
+    assert.equal(files[0], '../lib/combiner.js');
+    assert.equal(files[1], 'tests.js');
     callback();
   });
 }
@@ -29,7 +42,6 @@ function test_filter(callback){
   });
 
   combiner.filter(files, function(error, filtered){
-    console.log('>>',arguments);
     assert.equal(filtered.length, 3);
     assert.equal(filtered[0], 'foo');
     assert.equal(filtered[1], 'bar');
@@ -55,6 +67,32 @@ function test_includeDirs(callback){
     assert.equal(files[0].length, 1);
     assert.equal(files[0][0], '../lib/combiner.js');
     callback();
+  });
+}
+
+function test_includeDirs_nested(callback){
+  combiner.findFiles(['../'], function(error, index){
+    if(error){
+      throw error;
+    }
+
+    combiner.includeDirectories(index, function(error, _files){
+      if(error){
+        throw error;
+      }
+
+      combiner.flatten(_files, function(error, files){
+        if(error){
+          throw error;
+        }
+
+        assert.ok(files.indexOf('../lib/combiner.js')>-1);
+        assert.ok(files.indexOf('../test/tests.js')>-1);
+        assert.ok(files.indexOf('../bin/combiner')>-1);
+
+        callback();
+      });
+    });
   });
 }
 
@@ -127,10 +165,10 @@ function test_run(callback){
       callback(null,el.substring(0,1));  
     },
     'filter':function(el,callback){
-      callback(/test/.test(el));
+      callback(/^\.\.\/test/.test(el));
     }
   };
-  combiner.run('../',middleware,function(error, result){
+  combiner.run(['../'],middleware,function(error, result){
     if(error) throw error;
     assert.equal(result,'v,v');
     callback();
@@ -148,6 +186,8 @@ var tests = {
   'test_filter':test_filter,
   'test_map':test_map,
   'test_findFiles':test_findFiles,
+  'test_findFiles_fileList':test_findFiles_fileList,
+  'test_includeDirs_nested':test_includeDirs_nested,
   'test_includeDirs':test_includeDirs,
   'test_read':test_read,
   'test_reduce':test_reduce,
