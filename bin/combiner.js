@@ -44,6 +44,8 @@ function combine(){
       filter = opts.get('filter'),
       args = opts.args();
 
+  args.length == 0 && args.push('./');
+
   combiner.run(args, {
     'map':map ? evalCallback(map) : undefined
   , 'filter':filter ? evalCallback(filter) : undefined
