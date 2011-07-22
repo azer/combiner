@@ -1,58 +1,73 @@
-Combiner is both a command-line utility and a library for building source code.
-The basic idea behind its is to take advantage of a functional middleware that
-composes map/reduce/filter callbacks.
-
-Quick Start
-===========
-Most basic usage might be running it without parameters. Which produces the
-merge of all files on the executed directory. Specific filenames and
-directories can be picked also. Since both of these use cases aren't the goal
-of Combiner and won't be so common, it makes more sense to skip the
-demonstration of middleware;
-
-    $ combiner -map "function(el,callback){ callback(null, el.toUpperCase()) }"
-
-The simple command above uppercases all combined contents, as you've supposed.
-Combiner lets reduce and filter functions, as well.
-
-How It Works
-============
-
-The way it works is quite simple; takes filenames or searches executed
-directory to gather file names, applies asynchronous filter callbacks for each
-filename before it reads the contents of specified/found filenames.
-
-After reading contents of the filename list, combiner applies all specified map
-callbacks to the produced filelist. Built-in "readFile" function is one of
-those map functions and it can be shifted using splice method of the callback
-list;
-
-    > combiner.middleware.map.splice(0,1);
-    [Function: readFile]
-
-The final lap of middleware loop is to apply reduce callback - which doesn't
-support composition, in contrast to filter and map mechanisms.
-
-    > combiner.middleware.reduce
-    undefined
-
-As you see above, middleware's reduce option has no default value. However,
-Combiner replaces it with a function joining passed two arguments with two
-newline chars, if the reduce, at runtime, when it's left as undefined. 
-
-  > combiner.reduce(['a','b'], console.log.bind(console));
-  >
-  "a\n\nb"
-  > combiner.middleware.reduce = function(x,y){ return x+','+y; }
-  > combiner.reduce(['x','y'], console.log.bind(console));
-  >
-  "x,y"
+combiner is both a command-line utility and a library for merging and processing
+files.  The basic idea behind its is to take advantage of a functional,
+flexible middleware that composes map/reduce/filter callbacks.
 
 Install
 =======
-    > git clone https://github.com/azer/combiner.git
-    > cd roka
-    > make install
+From NPM:
+    $ npm install combiner
+
+From Source Code:
+    $ git clone https://github.com/azer/combiner.git
+    $ cd combiner;
+    $ make deps
+    $ make install
+
+Quick Start
+===========
+Besides of the API provided by the library, combiner includes a command line
+script to accomplish composite file merging aims. 
+
+Most basic usage example is running it without any parameters. Which produces a
+merge of all files on the executed directory.
+
+    $ echo "foo">a;
+    $ echo "bar">b;
+    $ echo "qux">c;
+    $ combiner
+    foo
+    bar
+    qux
+
+Specific filenames and directories can be picked as well.
+  
+    $ combiner a c
+    foo
+    qux
+
+The goal of combiner is to provide a middleware that lets us to process these
+files easily;
+
+    $ combiner -map "function(el,callback){ callback(null, el.toUpperCase()) }"
+    FOO
+    BAR
+    QUX
+
+The simple command above uppercases all combinerd contents, as you've supposed.
+The other options available are reduce and filter. Reduce option basicly
+replaces the default function joining the contens of the files; 
+
+    $ combiner -reduce "function(a,b,callback){ callback(null,a+","+b) }"
+    FOO,BAR,QUX
+
+It's quite similar with the map function as you've seen above. Unlike the map
+and reduce options, filter callbacks take filenames instead of the contents of
+the files.
+
+    $ combiner -filter "function(filename, cb){ cb(null,/^f|q/); }"
+    FOO
+    QUX
+
+The reasion behind this approach lies on the basic design idea of the combiner
+library. Its body is made up of a chain of functions, applying listed
+operations below;
+
+  - find all files in the working directory
+  - include and flatten nested directories if any exists
+  - apply filter callbacks to gathered filenames
+  - apply map callbacks to the gathered filenames*
+  - apply specified reduce function or the default one joining passed contents
+    with new lines.
 
 Dependencies
 ============
