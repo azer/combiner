@@ -1,4 +1,4 @@
-var combiner = require('combiner'),
+var combiner = require('../lib/combiner'),
     testModule = require('./tests'),
     tests = Object.keys(testModule)
             .filter(function(el){ return el.substring(0,5)=='test_' })
