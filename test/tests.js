@@ -145,7 +145,6 @@ function test_reduce_middleware(callback){
     cb(undefined,x+y);
   };
 
-
   combiner.reduce(ctx, function(error, result){
     if(error){
       throw error;

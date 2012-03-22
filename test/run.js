@@ -1,4 +1,5 @@
-var testModule = require('./tests'),
+var combiner = require('../lib/combiner'),
+    testModule = require('./tests'),
     tests = Object.keys(testModule)
             .filter(function(el){ return el.substring(0,5)=='test_' })
             .map(function(el){ return testModule[el] }),
@@ -15,6 +16,10 @@ var test, next, startTS;
 
   test = tests[i];
   next = arguments.callee.bind(undefined, i+1);
+
+  combiner.middleware.filter = [];
+  combiner.middleware.map = [combiner.read];
+  combiner.middleware.reduce = undefined;
 
   process.stdout.write('Running "'+test.name+'" ...');
 
