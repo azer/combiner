@@ -88,7 +88,7 @@ function test_includeDirs_nested(callback){
 
         assert.ok(files.indexOf('../lib/combiner.js')>-1);
         assert.ok(files.indexOf('../test/tests.js')>-1);
-        assert.ok(files.indexOf('../bin/combiner')>-1);
+        assert.ok(files.indexOf('../bin/combiner.js')>-1);
 
         callback();
       });
